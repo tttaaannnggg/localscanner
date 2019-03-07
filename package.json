@@ -17,6 +17,7 @@
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "libnmap": "^0.4.16",
     "node-libnmap": "^0.2.15",
