@@ -6,6 +6,9 @@ const path = require('path');
 const pg = require('pg');
 const connection = new pg.Client('postgres://localhost:5432/bigMac');
 const nmap = require('node-nmap');
+const screenshot = require('node-server-screenshot');
+const fs = require('fs');
+const fetch = require('node-fetch');
 
 const arpscan = require('arpscan');
 console.log('scanning')
@@ -23,6 +26,10 @@ pool.query( 'create table if not exists users(id serial primary key, mac varchar
 })
 
 pool.query( 'create table if not exists logs(id serial primary key, ip varchar, mac varchar, timestamp numeric)', (err, res)=>{
+})
+
+screenshot.fromURL("http://www.google.com", "./test.png", ()=>{
+  console.log('testimg saved');
 })
 
 //configurations for arp scan
@@ -73,20 +80,17 @@ function nmapScan(ip, res){
   const scan = new nmap.OsAndPortScan(ip)
   scan.on('complete', function(data){
     if(data[0]){
+      const target = data[0];
+      let url;
+      if (target.openPorts[0]){
+        url = `http://${target.ip}:${target.openPorts[0].port}`
+      }
       console.log('data from nmap', data[0].openPorts);
+      console.log('full data from nmap', data);
     }
     res.send(data);
   })
 }
-
-// TODO: remove this scan if it works in the function
-/*
-console.log('scanning with nmap');
-const scan = new nmap.OsAndPortScan('192.168.0.139');
-scan.on('complete', function(data){
-  console.log('data from nmap', data);
-})
-*/
 
 app.post('/nmapscan', function(req,res){
   console.log('starting nmap scan');
@@ -101,6 +105,12 @@ app.get('/api', function(req,res){
         res.send(data)
     })
 })
+/* trying to get screenshot to work. it doesn't.
+app.get('/screenshot', function(req,res){
+  fetch(`http://192.168.0.1:80`)
+    .then(data=>res.send(data));
+})
+*/
 
 app.get('/', function(req,res){
     res.sendFile(path.join(__dirname, 'bundle', "index.html"));
