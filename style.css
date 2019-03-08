@@ -3,8 +3,12 @@
   font-size: 20px;
   transition: all 1s;
 }
+h1{
+  text-align: right;
+  padding-top: 20px;
+  padding-right: 20px;
+}
 .app{
-  padding: 100px 0px;
 }
 
 .sidenav{
@@ -20,6 +24,12 @@
 
 .title{
   border-bottom: 5px solid black;
+}
+
+.chart{
+  margin-left: 150px;
+  height: 400px;
+  width: 90%;
 }
 
 .usercontainer{

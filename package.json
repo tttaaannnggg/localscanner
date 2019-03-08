@@ -29,6 +29,7 @@
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
     "url-to-screenshot": "^3.0.0",
+    "victory": "^32.0.0",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1"

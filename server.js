@@ -28,9 +28,6 @@ pool.query( 'create table if not exists users(id serial primary key, mac varchar
 pool.query( 'create table if not exists logs(id serial primary key, ip varchar, mac varchar, timestamp numeric)', (err, res)=>{
 })
 
-screenshot.fromURL("http://www.google.com", "./test.png", ()=>{
-  console.log('testimg saved');
-})
 
 //configurations for arp scan
 const options = {
@@ -50,13 +47,6 @@ function onResult(err,data){
         })
     }
 }
-//starts periodic arp scan. 1.8 million will run every 30 min, 300k will run every 5 min
-/*
-setInterval(()=>{
-    console.log('scanning')
-    arpscan(onResult, options);
-}, 1800000)
-*/
 
 function newScan(req, res){
   arpscan((err,data)=>{
@@ -71,6 +61,12 @@ function getCurrentUsers(cb){
     pool.query(`SELECT * from logs where timestamp=${newest}`, (err,res)=>{
       cb(res.rows)
     })
+  })
+}
+function getHistory(hrs, cb){
+  const hrsBefore = Date.now() - hrs * 60 * 60 * 1000;
+  pool.query(`select * from logs where timestamp > ${hrsBefore} order by timestamp desc`, (err,res)=>{
+    cb(res.rows);
   })
 }
 
@@ -105,12 +101,13 @@ app.get('/api', function(req,res){
         res.send(data)
     })
 })
-/* trying to get screenshot to work. it doesn't.
-app.get('/screenshot', function(req,res){
-  fetch(`http://192.168.0.1:80`)
-    .then(data=>res.send(data));
+
+app.get('/history', function(req,res){
+  getHistory(12, (data)=>{
+    res.set('Content-Type', 'application/json');
+    res.send(data);
+  })
 })
-*/
 
 app.get('/', function(req,res){
     res.sendFile(path.join(__dirname, 'bundle', "index.html"));
